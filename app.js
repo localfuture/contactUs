@@ -42,6 +42,22 @@ const contactSchema = new mongoose.Schema({
 
 const contactUsCollection = new mongoose.model("contactUsDetails",contactSchema);
 
+const registerSchema = new mongoose.Schema({
+    name: String,
+    gender: String,
+    dob: String,
+    address: String,
+    city: String,
+    district: String,
+    mobile: String,
+    email: String,
+    username: String,
+    password: String,
+    confirmpassword: String
+
+});
+
+const registerCollection = new mongoose.model("registerDetails", registerSchema);
 
 //////////////////////// Write to DB//////////////////////////////
 app.post("/writeToDB",(req,res)=>{
@@ -51,6 +67,17 @@ app.post("/writeToDB",(req,res)=>{
             console.log(error);
         }else{
             console.log("User Contact Added Successfully");
+        }
+    });
+});
+//////////////////////////// Register write to DB//////////////////
+app.post("/writeRegisterToDB",(req,res)=>{
+    const registerUser = new registerCollection(req.body);
+    registerUser.save((error)=>{
+        if(error){
+            console.log(error);
+        }else {
+            res.send("Registered Successfully");
         }
     });
 });
