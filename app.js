@@ -84,7 +84,7 @@ app.post("/writeRegisterToDB",(req,res)=>{
 
 ////////////////////////// View Messages //////////////////////////
 app.get("/displayMessages",(req,res) =>{
-    contactUsCollection.find({},{message:1,_id:0},(error,data)=>{
+    contactUsCollection.find((error,data)=>{
         if(error){
             console.log(error);
         }else{
