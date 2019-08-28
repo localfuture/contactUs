@@ -59,6 +59,19 @@ const registerSchema = new mongoose.Schema({
 
 const registerCollection = new mongoose.model("registerDetails", registerSchema);
 
+const studentSchema = new mongoose.Schema({
+    name: String,
+    roll: String,
+    admn: String,
+    college: String,
+    branch: String,
+    dob: String,
+    email: String
+    
+});
+
+const studentCollection = new mongoose.model("studentDetails", studentSchema);
+
 //////////////////////// Write to DB//////////////////////////////
 app.post("/writeToDB",(req,res)=>{
     const userContact = new contactUsCollection(req.body);
@@ -105,6 +118,65 @@ app.get("/searchMobile/:name",(req,res)=>{
         }
     });
 });
+//////////////////////////////////////////////Student write to db/////////////////////
+app.post("/AddStudent",(req,res)=>{
+    const student = new studentCollection(req.body);
+    student.save((error)=>{
+        if (error){
+            console.log(error);
+        } else {
+            res.send("Student Added Successfully");
+            console.log("Student Added Successfully");
+        }
+    });
+
+});
+
+//////////////////////////////////////////////View all Students///////////////////////////
+app.get("/viewAllStudents",(req,res)=>{
+    studentCollection.find((error,data)=>{
+        if (error) {
+            console.log(error);
+        } else {
+            res.send(data);
+        }
+    });
+});
+
+///////////////////////////////////////////Search student Using Admin No////////////
+app.get("/searchStudent/:admn",(req,res)=>{
+    var x = req.params.admn;
+    studentCollection.find({admn: x},(error,data)=>{
+        if(error) {
+            console.log(error);
+        } else {
+            res.send(data);
+        }
+    })
+})
+
+//////////////////////////////////////////Edit Student using Admin No//////////////////////
+// app.get("/editStudent/:admn",(req,res)=>{
+//     var a = req.params.admn;
+//     var n = req.body.name;
+//     var r = req.body.roll;
+//     var c = req.body.branch;
+//     var d = req.body.dob;
+//     var e = req.body.email;
+//     studentCollection.update({admn: a},{$set: {name: n, roll: r, college: c, dob: d, email: e},(error)=>{
+//             if (!error){
+//                 console.log("Successfully updated article");
+//             } else {
+//                 console.log(error);
+//             }
+            
+
+//     });
+// })
+
+
+//////////////////////////////////////////delete studend/////////////////////////////
+
 
 //////////////////////////////////////////////////////////////////////
 app.get("/",(req,res)=>{
