@@ -206,13 +206,14 @@ app.post("/searchStudent",(req,res)=>{
 
 //////////////////////////////////////////Edit Student using Admin No//////////////////////
 app.post("/editStudent",(req,res)=>{
+    var id = req.body._id;
     var a = req.body.admn;
     var n = req.body.name;
     var r = req.body.roll;
     var c = req.body.branch;
     var d = req.body.dob;
     var e = req.body.email;
-    studentCollection.update({admn: a},{$set: {name: n, roll: r, college: c, dob: d, email: e}},(error)=>{
+    studentCollection.update({_id: id},{$set: {name: n, roll: r,admn:a, college: c, dob: d, email: e}},(error)=>{
         if (!error) {
             console.log("Updated successfully");
             res.send("updated successfully");
@@ -226,8 +227,8 @@ app.post("/editStudent",(req,res)=>{
 
 //////////////////////////////////////////delete student/////////////////////////////
 app.post("/deleteStudent",(req,res)=>{
-    var delstud = req.body.admn;
-    studentCollection.remove({damin:delstud},(error)=>{
+    var id = req.body._id;
+    studentCollection.remove({_id: id},(error)=>{
         if(!error){
             console.log("deleted successfully");
         } else {
