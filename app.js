@@ -28,10 +28,9 @@ app.use(function (req, res, next) {
     next();
 });
 
+mongoose.connect("mongodb://localhost:27017/contactUsDB",{useNewUrlParser: true});
 
-//mongoose.connect("mongodb://localhost:27017/contactUsDB",{useNewUrlParser: true});
-
-mongoose.connect("mongodb+srv://anand:unicornb1331@cluster0-0tquo.mongodb.net/contactUsDB?retryWrites=true&w=majority");
+//mongoose.connect("mongodb+srv://anand:unicornb1331@cluster0-0tquo.mongodb.net/contactUsDB?retryWrites=true&w=majority");
 
 const contactSchema = new mongoose.Schema({
     name: String,
@@ -80,6 +79,7 @@ app.post("/writeToDB",(req,res)=>{
             console.log(error);
         }else{
             console.log("User Contact Added Successfully");
+            res.json("{'status':'success'}");
         }
     });
 });
@@ -108,9 +108,9 @@ app.get("/displayMessages",(req,res) =>{
 
 
 //////////////////////////// Search Phone Number /////////////////////
-app.get("/searchMobile/:name",(req,res)=>{
-    var name = req.params.name;
-    contactUsCollection.find({name: name},{name:1,mobile:1,_id:0},(error,data)=>{
+app.post("/searchMobile",(req,res)=>{
+    var name = req.body.name;
+    contactUsCollection.find({name: name},(error,data)=>{
         if (error){
             console.log(error);
         } else {
@@ -118,6 +118,55 @@ app.get("/searchMobile/:name",(req,res)=>{
         }
     });
 });
+
+///////////////////////////// Delete contact /////////////////////////////
+app.post("/deleteUser",(req,res)=>{
+    var name = req.body.name;
+    contactUsCollection.remove({name:name},(error)=>{
+        if(!error) {
+            console.log("Contact Deleted successfully");
+        } else {
+            console.log(error);
+        }
+    });
+});
+
+///////////////////////////Edit Contact///////////////////////////////////
+app.post("/editUser",(req,res)=>{
+    var id = req.body._id;
+    var name = req.body.name;
+    var email = req.body.email;
+    var mobile = req.body.mobile;
+    var message = req.body.message;
+    console.log(id);
+   
+    contactUsCollection.update({_id: id},{$set: {name: name, email: email, mobile: mobile,message: message }},(error)=>{
+        if (!error) {
+            console.log("Updated successfully");
+            res.send("updated successfully");
+        } else {
+            console.log(error);
+        }
+    });
+         
+    
+});
+
+///////////////////////////////////Delete contact/////////////////////
+app.post("/deleteContact",(req,res)=>{
+    var id = req.body._id;
+    console.log(id);
+
+    contactUsCollection.remove({_id:id},(error)=>{
+        if(!error) {
+            console.log("Deleted Successfully");
+        } else {
+            console.log(error);
+        }
+    });
+});
+
+
 //////////////////////////////////////////////Student write to db/////////////////////
 app.post("/AddStudent",(req,res)=>{
     const student = new studentCollection(req.body);
@@ -144,8 +193,8 @@ app.get("/viewAllStudents",(req,res)=>{
 });
 
 ///////////////////////////////////////////Search student Using Admin No////////////
-app.get("/searchStudent/:admn",(req,res)=>{
-    var x = req.params.admn;
+app.post("/searchStudent",(req,res)=>{
+    var x = req.body.admn;
     studentCollection.find({admn: x},(error,data)=>{
         if(error) {
             console.log(error);
@@ -156,27 +205,36 @@ app.get("/searchStudent/:admn",(req,res)=>{
 })
 
 //////////////////////////////////////////Edit Student using Admin No//////////////////////
-// app.get("/editStudent/:admn",(req,res)=>{
-//     var a = req.params.admn;
-//     var n = req.body.name;
-//     var r = req.body.roll;
-//     var c = req.body.branch;
-//     var d = req.body.dob;
-//     var e = req.body.email;
-//     studentCollection.update({admn: a},{$set: {name: n, roll: r, college: c, dob: d, email: e},(error)=>{
-//             if (!error){
-//                 console.log("Successfully updated article");
-//             } else {
-//                 console.log(error);
-//             }
-            
+app.post("/editStudent",(req,res)=>{
+    var a = req.body.admn;
+    var n = req.body.name;
+    var r = req.body.roll;
+    var c = req.body.branch;
+    var d = req.body.dob;
+    var e = req.body.email;
+    studentCollection.update({admn: a},{$set: {name: n, roll: r, college: c, dob: d, email: e}},(error)=>{
+        if (!error) {
+            console.log("Updated successfully");
+            res.send("updated successfully");
+        } else {
+            console.log(error);
+        }
+    });
+           
+})
 
-//     });
-// })
 
-
-//////////////////////////////////////////delete studend/////////////////////////////
-
+//////////////////////////////////////////delete student/////////////////////////////
+app.post("/deleteStudent",(req,res)=>{
+    var delstud = req.body.admn;
+    studentCollection.remove({damin:delstud},(error)=>{
+        if(!error){
+            console.log("deleted successfully");
+        } else {
+            console.log(error);
+        }
+    });
+});
 
 //////////////////////////////////////////////////////////////////////
 app.get("/",(req,res)=>{
